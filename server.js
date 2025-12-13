@@ -16,16 +16,26 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-const corsOption = {
-    origin: ["http://localhost:5173"],
-    credentials: true
-}
-app.use(cors(corsOption));
+const allowedOrigins = ["http://localhost:5173", process.env.FRONTEND_URL];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.get("/", (req, res) => {
-    res.json({
-        success: true,
-        message: "home page of job portal - backend 5000"
-    })
+  res.json({
+    success: true,
+    message: "home page of job portal - backend 5000",
+  });
 });
 
 // app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -48,30 +58,32 @@ app.use("/api/v1/job", jobRouter);
 app.use("/api/v1/application", applicationRouter);
 
 app.get("/users", async (req, res) => {
-    try {
-        const users = await User.find();
-        if (!users) {
-            return res.status(404).json({
-                success: false,
-                message: "no users found"
-            })
-        }
-        return res.status(200).json({
-            success: true,
-            message: "home page of backend 5000"
-        })
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "error in get user info",
-            error
-        })
+  try {
+    const users = await User.find();
+    if (!users) {
+      return res.status(404).json({
+        success: false,
+        message: "no users found",
+      });
     }
-
-})
-
-app.listen(process.env.PORT, () => {
-    ConnectDB();
-    console.log(`server running on ${process.env.PORT}`);
-
-})
+    return res.status(200).json({
+      success: true,
+      message: "home page of backend 5000",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "error in get user info",
+      error,
+    });
+  }
+});
+ConnectDB()
+  .then(() => {
+    app.listen(process.env.PORT, () => {
+      console.log(`Server running on ${process.env.PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("Database connection failed", err);
+  });
