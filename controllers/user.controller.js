@@ -69,13 +69,12 @@ export const login = async (req, res) => {
       role: user.role,
       profile: user.profile,
     };
-    return res
-      .status(200)
+    res
       .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: "lax",
-        secure: false,
+        secure: true, // ✅ REQUIRED (HTTPS)
+        sameSite: "none", // ✅ REQUIRED (cross-origin)
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .json({
         message: `Welcome back ${user.fullname}`,
