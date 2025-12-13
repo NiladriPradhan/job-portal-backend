@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../model/userModel.js";
-import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
+import getDataUri from "../utils/dataUri.js";
 
 export const register = async (req, res) => {
   const { fullname, email, password, phoneNumber, role } = req.body;
