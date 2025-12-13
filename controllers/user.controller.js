@@ -69,11 +69,13 @@ export const login = async (req, res) => {
       role: user.role,
       profile: user.profile,
     };
+    const isProduction = process.env.NODE_ENV === "production";
+
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: true, // ✅ REQUIRED (HTTPS)
-        sameSite: "none", // ✅ REQUIRED (cross-origin)
+        secure: isProduction, // ✅ true only in prod
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       })
       .json({

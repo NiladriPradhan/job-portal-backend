@@ -16,30 +16,15 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://job-portal-frontend-1vhs.vercel.app",
-    ],
-    credentials: true,
-  })
-);
-
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true,
-//   })
-// );
-
+const allowOrigin = [
+  "http://localhost:5173",
+  "https://job-portal-frontend-one-topaz.vercel.app",
+];
+const corsOption = {
+  origin: allowOrigin,
+  credentials: true,
+};
+app.use(cors(corsOption));
 app.get("/", (req, res) => {
   res.json({
     success: true,
